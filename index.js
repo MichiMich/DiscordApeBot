@@ -15,7 +15,16 @@ const encouragements = [
     "Stay strong friend!"
 ]
 
-const helpText = 'available commands:\n**!inspire** - get a inspiring quote\n**!love** - send an love ape\n**!apes** - assembles a bunch of the ape army\n anymessage including **!bot** which should be a yes or now question will result in a random yes or no \nexample: hey !bot am I a free human?'
+const helpText = 'available commands:\n' +
+    '**ask the bot** - this could be pretty fun, go to <#977656438728048650> and fire some yes/no question with the command **!bot** in it, like: **hey !bot am I a free human?**\n' +
+    '**!inspire** - get a inspiring quote\n' +
+    '**!love** - send an love ape\n' +
+    '**!apes** - assembles a bunch of the ape army\n' +
+    '**!mint** - informations about mint\n' +
+    '**!why** - points to information about that project' +
+    '!roadmap - gives the current roadmap' +
+    '!info - fires the mint, why and roadmap command\n'
+
 
 
 function getQuote() {
@@ -38,6 +47,7 @@ function botQuestionInChannelAllowed(msg) {
 
 function askTheBot(msg) {
     askYesOrNo(msg)
+    //add additional questions here, seperate them with some more command
 }
 
 function askYesOrNo(msg) {
@@ -62,7 +72,7 @@ client.on("ready", () => {
 client.on("messageCreate", msg => {
     if (msg.author.bot) return //not replying to bot itself
 
-    if (msg.content === "$help") {
+    if (msg.content === "$help" && (msg.channel.id === "974557216973672448" || msg.channel.id === "971842106303856740")) {
         msg.channel.send(helpText)
     }
     else if (msg.content === "!inspire" || msg.content === "! inspire") {
@@ -88,8 +98,43 @@ client.on("messageCreate", msg => {
         const encouragement = encouragements[Math.floor(Math.random() * encouragements.length)]
         msg.reply(encouragement)
     }
+    botInformations(msg)
+
 
 })
+
+
+
+
+function botInformations(msg) {
+    const roadmapAnswer = {
+        content: "here is the current roadmap, more informations can be found at <#977276495649189888>",
+        files: ['./OnChainAsciiApesRoadmap.png']
+    }
+    const mintAnswer = {
+        content: "mint is terminated for **end of may 2022**\nI am a bot, I cant be excited, but I hope you are",
+        files: ['./Apes.gif']
+    }
+    const whyAnswer = 'check why this project was created and whats it about at <#971419909735202828>'
+
+    if (msg.content === "!mint") {
+        msg.reply(mintAnswer)
+    }
+    /*todo: after mint
+    else if(msg.content === "!floor") {}*/
+    else if (msg.content === "!why") {
+        msg.reply(whyAnswer)
+    }
+    else if (msg.content === "!roadmap") {
+        msg.reply(roadmapAnswer)
+    }
+    else if (msg.content === "!info") {
+        msg.send(whyAnswer)
+        msg.send(roadmapAnswer)
+        msg.send(mintAnswer)
+    }
+}
+
 
 keepAlive()
 client.login(process.env['TOKEN'])
