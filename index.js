@@ -2,7 +2,7 @@ const Discord = require("discord.js")
 //const fetch = require("node-fetch")
 const fetch = (...args) =>
     import('node-fetch').then(({ default: fetch }) => fetch(...args));
-const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
+const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"] })
 const keepAlive = require("./server")
 const sadWords = ["sad", "depressed", "unhappy", "angry", "red market"]
 const channelIdForAskTheBot = ["977656438728048650", "971842106303856740"] //add wanted ids here where bot can be asked with !bot command
@@ -64,9 +64,18 @@ function askYesOrNo(msg) {
     }
 }
 
+
+
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`)
 })
+
+//get new incoming members at welcome channel and greet them
+client.on('guildMemberAdd', member => {
+    const welcomeMessage = "Welcome " + member.displayName + " to the **OnChainAsciiApes**.\nGood to have you! Assign your role at <#955137627831550002>"
+    member.guild.channels.get('951840312752472144').send(welcomeMessage);
+});
+
 
 //react on messages
 client.on("messageCreate", msg => {
