@@ -11,6 +11,12 @@ client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`)
 })
 
+/*
+if (sadWords.some(word => msg.content.includes(word))) {
+        const encouragement = encouragements[Math.floor(Math.random() * encouragements.length)]
+        msg.reply(encouragement)
+*/
+
 
 //todo need to add welcome message to config
 //get new incoming members at welcome channel and greet them
@@ -21,10 +27,11 @@ client.on('guildMemberAdd', member => {
 
 function botResponse(msg, allowedChannelConfig) {
     //is the bot allowed in her with this command
-    let channelIdArray = allowedChannelConfig.map(a => a.channelId);
+    let channelIdArray = allowedChannelConfig.map(a => a.channelId); //create array of channelIds from object array
 
     let indexOfAllowedElement = helpfulScript.isBotAllowedExtended(msg.channel.id, channelIdArray)
     if (indexOfAllowedElement != -1) {
+        //bot is allowed in this channel
         //get channel, search if msg has allowedCommands in it, if allowed commands array is empty, search in all commands
         console.log("found data:", config.allowedChannels[indexOfAllowedElement])
         //now search what we should respond to
@@ -39,7 +46,6 @@ function botResponse(msg, allowedChannelConfig) {
             botCommands = config.allowedChannels[indexOfAllowedElement].allowedCommands;
         }
         console.log("searching for these commands: ", botCommands)
-
         if (!reactOnCommand(msg, botCommands) && config.reactionSettings.reactOnUnknownCommands) {
             msg.channel.send(config.reactionSettings.reactMessage)
         }
@@ -57,20 +63,37 @@ function logError(err, msg) {
 function reactOnCommand(msg, commands) {
     //check if commands is an array
     console.log("react on these commands", commands)
-    //search in array if content is found and react
-    for (i = 0; i < commands.length; i++) {
-        needsToBeExactCommand = config.botCommands[i].needsToBeExactCommand;
-        console.log("needs to be exact command: ", needsToBeExactCommand)
-        console.log("search for exact command:", commands[i])
-        if (helpfulScript.hasExactString(msg.content, commands[i]) && needsToBeExactCommand ||
-            !needsToBeExactCommand && helpfulScript.containsWord(msg.content, commands[i])) {
-            //ok, we found the command, and we now where the i is in the config, but now I want to call a function
-            if (config.botCommands[i].definedFunction == undefined) {
-                logError("no function defined for this command", msg)
-                return
+    //find where command is
+    //you are allowed to search msg.content value in the available bot commands and react on them
+    var wantedCommand = "";
+    for (let i = 0; i < commands.length; i++) {
+        if (helpfulScript.containsWord(msg.content, commands[i])) {
+            //command found
+            wantedCommand = commands[i];
+            break;
+        }
+    }
+
+    var indexOfCommand = config.botCommands.findIndex(a => a.command === wantedCommand);
+    if (indexOfCommand != -1) {
+        //available at config given commands
+        if (config.botCommands[indexOfCommand].needsToBeExactCommand) {
+            //console.log("searching for exact string")
+            if (helpfulScript.hasExactString(msg.content, config.botCommands[indexOfCommand].command)) {
+                console.log("exact string found")
+                if (config.botCommands[indexOfCommand].definedFunction == undefined) {
+                    logError("no function defined for this command", msg)
+                    return
+                }
+                else {
+                    config.botCommands[indexOfCommand].definedFunction(msg);
+                    return (true)
+                }
             }
-            config.botCommands[i].definedFunction(msg)
-            return true
+        }
+        else {
+            config.botCommands[indexOfCommand].definedFunction(msg);
+            return (true)
         }
     }
 }
@@ -83,5 +106,4 @@ client.on("messageCreate", msg => {
     botResponse(msg, config.allowedChannels)
 })
 
-//keepAlive()
 client.login(process.env.TOKEN)

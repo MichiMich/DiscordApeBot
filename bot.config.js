@@ -33,7 +33,8 @@ const botConfig = {
                         files: ['./img/Apes.gif']
                     });
             }
-        }, {
+        },
+        {
             command: "!bot",
             needsToBeExactCommand: false, //if undefined it results in the same as false, so would be needed to give
             description: "gives you an yes/no/dont-know answer",
@@ -61,10 +62,20 @@ const botConfig = {
             command: "!quest",
             needsToBeExactCommand: true,
             description: "shows the current quest informations",
-            definedFunction: function (msg) { msg.reply("Join the next quest, its live\nThe reward of this quest was be 150$+ **Exciting**\njump to <#978240705816322098>") }
+            definedFunction: function (msg) { msg.reply("Join the next quest, its live\nThe reward of this quest was 150$+ **Exciting**\njump to <#978240705816322098>") }
         }
+        /* need to figure out, function if some other content is given like array and with what to react on this
+        {
+            command: ["sad", "depressed", "unhappy", "angry", "red market"],
+            needsToBeExactCommand: false,
+            description: "reacting on sad words to cheer you up",
+            definedFunction: function (msg) { msg.reply("cheerup") }
+        }
+        */
+
 
     ],
+    //allowedCommands: //empty array=all botCommands are allowed in this channel, given array, searching for all which is given
     allowedChannels: [
         {
             channelName: "ask-the-bot",
@@ -74,8 +85,14 @@ const botConfig = {
         {
             channelName: "bot-test",
             channelId: "971842106303856740",
-            allowedCommands: [] //empty array=all botCommands are allowed in this channel
+            allowedCommands: []
+        },
+        {
+            channelName: "general",
+            channelId: "951778209005977603",
+            allowedCommands: ["!help", "!inspire", "!love", "!apes", "!quest"]
         }
+
     ],
     reactionSettings: {
         reactOnUnknownCommands: false,
