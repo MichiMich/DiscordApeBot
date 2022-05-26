@@ -44,6 +44,8 @@ exports.isBotAllowedExtended = function (channelId, allowedChannels) {
     return (-1);
 }
 
+exports.get
+
 
 exports.createHelpCommand = function (botCommands) {
     if (typeof botCommands != typeof []) {
@@ -57,14 +59,3 @@ exports.createHelpCommand = function (botCommands) {
     return helpText;
 }
 
-const fetch = (...args) =>
-    import('node-fetch').then(({ default: fetch }) => fetch(...args));
-exports.getInspiringQuote = function () {
-    return fetch("https://zenquotes.io/api/random")
-        .then(res => {
-            return res.json()
-        })
-        .then(data => {
-            return data[0]["q"] + " -" + data[0]["a"]
-        })
-}
